@@ -1,0 +1,96 @@
+<!doctype html>
+{% load static %}
+<html lang="en" class="h-100">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AskMe!</title>
+
+        <link href=" {% static "css/bootstrap.css" %}" rel="stylesheet">
+        <link href="{% static "css/style.css" %}" rel="stylesheet">
+    </head>
+    <body class="d-flex flex-column h-100">
+        <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand margin-l20" href="{% url 'index' %}">AskMe!</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
+                    <form class="d-flex" role="search" >
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    </form>
+                    <a href="{% url "new_question" %}"><button class="btn btn-outline-success me-2 margin-l50" type="button" >Ask</button></a>
+                </div>
+                {% if request.user.is_authenticated %}
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <div class="avatar-in-navbar">
+                                <img src="{{ request.user.profile.avatar.url }}" alt="" />
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page">{{ request.user.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'settings' %}">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'log_out' %}">Log out</a>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'log_in' %}">Log in</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'register' %}">Register</a>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+        </header>
+        <main class="flex-shrink-0">
+            <div class="container">
+                    {% block content %}
+                    {% endblock %}
+                    </div>
+                    <div class="col-4">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-8">
+                        <div class="populartaglist">
+                            <h3>Popular Tags</h3>
+                            {% for tag in popular_tags %}
+                                <a href="{% url 'questions_by_tag' tag_id=tag.id %}">{{ tag.value }}</a> 
+                            {% endfor %}
+                        </div>
+                        <div class="bestuserlist">
+                            <h4>Best Members</h4>
+                            <ul>
+                            {% for user in best_users %}
+                                <li><a href="#">{{ user.nickname }}</a></li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer mt-auto py-3 bg-light">
+            <div class="container">
+                <span class="text-muted">Copyright AskMe! 2022. All rights reserved.</span>
+            </div>
+        </footer>
+        <script src="{% static "js/jquery-3.6.2.min.js" %}""></script>
+        <script src="{% static "js/main.js" %}""></script>      
+    </body>
+</html>

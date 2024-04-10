@@ -1,0 +1,50 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+{% block content %}
+{%include 'inc/code_after_title.html'%}
+<div>
+  <div class="row">
+    <div class="col-4">
+      <div class="question-avatar">
+        <img src="{{ question.author.avatar.url }}" alt="" />
+      </div>
+      <form class="voting">
+        <span class="vote-count">{{ question.get_likes }}</span>
+        <button type="button" class="btn btn-light">↑</button>
+      </form>
+    </div>
+    <div class="col-8">
+      <h2 class="question-title">{{ question.title }}</h2>
+      <div class="question-text mb-20">
+        {{ question.text }}
+      </div>
+      <div class="question-tags">
+        {% include 'inc/question_tags.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+<h1>Answers</h1>
+{% for answer in answers %}
+  {% include 'inc/answer_item.html' %}
+{% endfor %}
+{% if request.user.is_authenticated %}
+  <div class="row">
+    <form action="{% url 'question' question_id=question.id %}" method="post">
+      <div class="mb-3">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+      </div>
+      <button type="submit" class="btn btn-success col-2 mb-5 btn-answer">Answer</button>
+    </form>
+  </div>
+{% else %}
+  <div class="row">
+    <div class="mb-2">
+      <h5>Log in to create a new answer!</h5>
+    </div>
+    <a href="{% url 'log_in' %}"><button type="submit" class="btn btn-success col-2 mb-5 btn-answer">Log in</button></a>
+  </div>
+{% endif %}
+{% endblock %}

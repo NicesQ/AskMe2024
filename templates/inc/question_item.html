@@ -1,0 +1,31 @@
+{%load static%}
+<div class="question">
+  <div class="row">
+    <div class="col-2">
+      <div class="avatar">
+        <img src="{{ question.author.avatar.url }}" alt="" />
+      </div>
+      <div class="voting">
+        <span class="vote-count">{{question.get_likes}}</span>
+        <button type="button" class="btn btn-light">↑</button>
+      </div>
+    </div>
+    <div class="col-10">
+      <div class="question-title">
+        <a href="{% url 'question' question_id=question.id %}">{{ question.title }}</a>
+      </div>
+      <div class="question-text">
+        {{ question.text }}
+      </div>
+      <div class="row">
+        <div class="col-4 answers-count">
+          <a href="{% url 'question' question_id=question.id %}">answers({{ question.answers.count}})</a>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-4">
+          {% include 'inc/question_tags.html' %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

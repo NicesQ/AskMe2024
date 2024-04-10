@@ -1,0 +1,18 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block content %}
+{% load bootstrap5 %}
+<h1>Account settings</h1>
+<div class="row">
+    <div class="col-4">
+        <form action="{% url 'settings' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="question-avatar mb-3">
+                <img src="{{ request.user.profile.avatar.url }}" alt="Avatar" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Save</button>
+        </form>
+    </div>
+    <div class="col-4">
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'inc/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block content %}
+<h1>Create new question</h1>
+{% include 'inc/code_after_title.html' %}
+<form action="{% url 'new_question' %}" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button type="submit" class="btn btn-primary btn-block">Create new question</button>
+</form>
+{% endblock %}

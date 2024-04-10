@@ -1,0 +1,8 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block content %}
+<h1>Page not found</h1>
+{% include 'inc/code_after_title.html' %}
+<p>Looks like page that you are looking for doesn't exist :(</p>
+<a href="{% url 'index' %}">Go to main page</a>
+{% endblock %}

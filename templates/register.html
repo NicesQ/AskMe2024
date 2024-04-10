@@ -1,0 +1,15 @@
+{% extends 'inc/base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block content %}
+<h1>Register</h1>
+<div class="row">
+  <div class="col-4">
+      <form action="{% url 'register' %}" method="post">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+      </form>
+  </div>
+  <div class="col-4">
+{% endblock %}

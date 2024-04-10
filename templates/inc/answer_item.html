@@ -1,0 +1,28 @@
+{% load static %}
+<div class="question">
+  <div class="row">
+    <div class="col-2">
+      <div class="avatar">
+        <img src="{{ answer.author.avatar.url }}" alt="" />
+      </div>
+      <div class="voting">
+        <span class="vote-count">{{answer.get_likes}}</span>
+        <button type="button" class="btn btn-light">↑</button>
+      </div>
+    </div>
+    <div class="col-10">
+      <h2 class="question-title"> {{answer.title}}</h2>
+      <div class="question-text mb-20">
+        {{answer.text}}
+      </div>
+      <div class="form-check">
+        {% if answer.isCorrect %}
+          <input type="checkbox" class="form-check-input" id="exampleCheck1" checked disabled>
+        {% else %}
+          <input type="checkbox" class="form-check-input" id="exampleCheck1" disabled>
+        {% endif %}
+        <label class="form-check-label" for="exampleCheck1">Correct</label>
+      </div>
+    </div>
+  </div>
+</div>

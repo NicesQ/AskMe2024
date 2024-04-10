@@ -1,0 +1,6 @@
+<div class="question-tags">
+    Tags:
+    {% for tag in question.tags.all %}
+        <a href="{% url 'questions_by_tag' tag_id=tag.id %}">{{ tag.value }}</a> 
+    {% endfor %}
+</div>

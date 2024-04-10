@@ -1,0 +1,10 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block content %}
+<h1>Popular questions</h1>
+{% include 'inc/code_after_title.html' %}
+{% for question in page_obj %}
+  {% include 'inc/question_item.html' %}
+{% endfor %}
+{% include 'inc/paginator.html' %}
+{% endblock %}
