@@ -130,8 +130,8 @@ def new_question(request):
         if form.is_valid():
             question = form.save()
             if question:  
-                zero_like = models.Like.objects.create(content_type = ContentType.objects.get_for_model(Question), value = 0, owner = request.user, object_id = question.id)
-                return redirect(reverse('question') + question.id)
+                zero_like = models.Like.objects.create(content_type = ContentType.objects.get_for_model(Question), value = 0, owner = request.user.profile, object_id = question.id)
+                return redirect('question', question_id=question.id)
             else:
                 form.add_error(field=None,error="Something wrong!")
     context = {

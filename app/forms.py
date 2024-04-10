@@ -72,7 +72,7 @@ class NewQuestionForm(forms.ModelForm):
         for tag_name in tag_names:
             tag, created = models.Tag.objects.get_or_create(value=tag_name)
             tags.append(tag)
-        question = models.Question.objects.create(title=self.cleaned_data['title'], text=self.cleaned_data['text'], author=self.user)
+        question = models.Question.objects.create(title=self.cleaned_data['title'], text=self.cleaned_data['text'], author=self.user.profile)
         for tag in tags:
             question.tags.add(tag)
         return question
