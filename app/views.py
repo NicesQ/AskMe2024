@@ -1,5 +1,6 @@
+import string
 from django.forms import model_to_dict
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django.contrib import auth
@@ -7,6 +8,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.views.decorators.csrf import csrf_protect
 
 from app.forms import LoginForm, RegistrationForm, SettingsForm, NewQuestionForm, NewAnswerForm
 from . import models
@@ -34,23 +36,16 @@ def question(request, question_id: int):
     else:
         popular_tags = models.Tag.objects.popular_tags()
         best_users = models.Profile.objects.top_profiles()
-        print(question_id)
-        print(models.Question.objects.count())
-        print( models.Question.objects)
         question_item = models.Question.objects.get(id = question_id)
         answers = models.Answer.objects.ordered_answers(question_id)
         if request.method == 'GET':
             form = NewAnswerForm(request.user, question_item)
         if request.method == 'POST':
-            form = NewAnswerForm(request.user, request.POST)
+            form = NewAnswerForm(request.user, question_item, request.POST)
             if form.is_valid():
                 answer = form.save()
                 if answer:  
-                    answer.user = request.user
-                    answer.question = question_item.id
-                    answer.save()
-                    zero_like = models.Like.objects.create(content_type = ContentType.objects.get_for_model(Answer), value = 0, owner = request.user, object_id = answer.id)
-                    return redirect(reverse('question') + question_id)
+                    zero_like = models.Like.objects.create(content_type = ContentType.objects.get_for_model(Answer), value = 0, owner = request.user.profile, object_id = answer.id)
                 else:
                     form.add_error(field=None,error="Something wrong!")
             
@@ -65,6 +60,7 @@ def question(request, question_id: int):
 
 
 @require_http_methods(['GET','POST'])
+@csrf_protect
 def log_in(request):
     popular_tags = models.Tag.objects.popular_tags()
     best_users = models.Profile.objects.top_profiles()
@@ -160,6 +156,7 @@ def questions_by_tag(request, tag_id: int):
 
 @login_required(login_url='log_in', redirect_field_name='continue')
 @require_http_methods(['GET','POST'])
+@csrf_protect
 def settings(request):
     popular_tags = models.Tag.objects.popular_tags()
     best_users = models.Profile.objects.top_profiles()
@@ -179,10 +176,39 @@ def settings(request):
     return render(request, 'settings.html',context=context)
 
 
+@csrf_protect
 def log_out(request):
     auth.logout(request)
     return redirect(reverse('index'))
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='log_in', redirect_field_name='continue')
+def like_async(request, object_id: int, object_type: int):
+    if object_type == 1:
+        content_type = ContentType.objects.get_for_model(Answer)
+    else:
+        content_type = ContentType.objects.get_for_model(Question)
+    like, like_created = Like.objects.get_or_create(content_type = content_type, value = 1, owner = request.user.profile, object_id = object_id)
+    if not like_created:
+        like.delete()
+    return JsonResponse({'likes_count': Like.objects.filter(content_type = content_type, object_id = object_id).count()-1})
+
+
+@require_http_methods(['POST'])
+def correct_answer_async(request, answer_id: int, question_id: int):
+    answers = Answer.objects.filter(question_id=question_id)
+    for answer in answers:
+        if answer.id != answer_id:
+            answer.isCorrect = False
+            answer.save()
+        else:
+            if answer.isCorrect:
+                answer.isCorrect = False
+            else:
+                answer.isCorrect = True
+            answer.save()
+    return JsonResponse({})
 
 def paginate(objects_list, request, items_per_page=20):
     paginator = Paginator(objects_list, items_per_page)

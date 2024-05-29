@@ -7,7 +7,8 @@
       </div>
       <div class="voting">
         <span class="vote-count">{{question.get_likes}}</span>
-        <button type="button" class="btn btn-light">↑</button>
+        {% csrf_token %}
+        <button type="button" class="btn btn-light like-button" data-objectType="2" data-objectId="{{ question.id }}">↑</button>
       </div>
     </div>
     <div class="col-10">

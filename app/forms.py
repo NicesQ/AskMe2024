@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import ValidationError
@@ -67,7 +68,8 @@ class NewQuestionForm(forms.ModelForm):
         super(NewQuestionForm, self).__init__(*args, **kwargs)
           
     def save(self):
-        tag_names = self.cleaned_data['tags']
+        cleaned_str = re.sub(r'[^a-zA-Zа-яА-Я]', ' ', self.cleaned_data['tags'])
+        tag_names = cleaned_str.split()
         tags = []
         for tag_name in tag_names:
             tag, created = models.Tag.objects.get_or_create(value=tag_name)
@@ -92,5 +94,5 @@ class NewAnswerForm(forms.ModelForm):
         super(NewAnswerForm, self).__init__(*args, **kwargs)
  
     def save(self):
-        answer = models.Answer.objects.create(title=self.cleaned_data['title'], text=self.cleaned_data['text'], author=self.user, question=self.question)
+        answer = models.Answer.objects.create(title=self.cleaned_data['title'], text=self.cleaned_data['text'], author=self.user.profile, question=self.question)
         return answer

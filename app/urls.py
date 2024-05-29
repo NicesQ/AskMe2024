@@ -13,6 +13,8 @@ urlpatterns = [
     path('settings/',views.settings, name='settings'),
     path('new/',views.new_question, name='new_question'),
     path('tags/<int:tag_id>',views.questions_by_tag, name='questions_by_tag'),
+    path('like_async/<int:object_id>/<int:object_type>',views.like_async, name='like_async'),
+    path('question/correct_change/<int:answer_id>/<int:question_id>',views.correct_answer_async, name="correct_answer_change")
 ] 
 
 if settings.DEBUG:
